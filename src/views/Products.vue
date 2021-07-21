@@ -125,11 +125,14 @@ export default {
       const productComponent = this.$refs.productModal;
       productComponent.openModal();
     },
-    // 新增購物車
+    // 更新後台商品內容
     updateProduct(item) {
       // 產品資料存入 tempProduct
       this.tempProduct = item;
       // ? 為什麼這裡不是 cart 而是 /admin/product
+      // 這裡操作的都是後台的產品內容，跟購物車無關
+      // 所以會使用 /admin/product，而不是 cart
+      // 目前檢視串接 cart API 只有在前台的頁面
       let api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/product`;
       let httpMethod = 'post';
       let status = '新增產品';
@@ -139,8 +142,7 @@ export default {
         httpMethod = 'put';
         status = '更新產品';
       }
-      // ？
-      // 這裡我理解為 上面是判斷API該使用 post 或是 put
+      // 上面是判斷API該使用 post 或是 put
       // 底下才是串接API
       const productComponent = this.$refs.productModal;
       this.$http[httpMethod](api, { data: this.tempProduct })
@@ -148,10 +150,11 @@ export default {
         if(response.data.success) {
           this.$httpMessageState(response, status);
           productComponent.hideModal();
-          // ?
+          // 這段是因為刪除完產品後，需要再重新取得資料來渲染畫面，因此呼叫 this.getProducts()
+          // 帶入 this.currentPage 參數，則是為了當使用者在第 2、3 或其他頁數執行刪除產品後，可以留在當前頁面，不會跳回第一頁
           this.getProducts(this.currentPage);
         } else {
-          // ?
+          // 參考 this.$httpMessageState(response, '刪除產品'); 的說明
           this.$httpMessageState(response, status);
         }
       });
@@ -168,7 +171,9 @@ export default {
       this.isLoading = true;
       this.$http.delete(url)
       .then((response) => {
-        // ?
+        // 這一段可以從 main.js 第 13 行得知 this.$httpMessageState() 為 pushMessageState.js
+        // 而在 pushMessageState.js 這支檔案裡面，會用到的參數有 response 跟 title
+        // 將 response 和 '刪除產品' 作為參數帶入檔案裡面後，用 emit 執行 ToastMessages.vue 元件，來印出訊息。
         this.$httpMessageState(response, '刪除產品');
         const delComponent = this.$refs.delModal;
         delComponent.hideModal();

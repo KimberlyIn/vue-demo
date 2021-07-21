@@ -1,26 +1,23 @@
 <template>
-  <router-view/>
+  <ToastMessages />
+  <router-view />
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import ToastMessages from '@/components/ToastMessages.vue'; 
+import emitter from '@/methods/eventBus';
+import $httpMessageState from '@/methods/pushMessageState';
 
-#nav {
-  padding: 30px;
+export default {
+  provide() {
+    return {
+      emitter,
+      $httpMessageState,
+    };
+  },
+  components: {
+    ToastMessages,
+  },
+};
+</script>
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
-</style>
