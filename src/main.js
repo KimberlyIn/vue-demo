@@ -19,7 +19,7 @@ import $httpMessageState from '@/methods/pushMessageState';
 
 import App from './App.vue'
 import router from './router'
-// import { date, currency } from './methods/filters';
+import { date, currency } from './methods/filters';
 
 Object.keys(AllRules).forEach((rule) => {
   defineRule(rule, AllRules[rule]);
@@ -33,6 +33,10 @@ configure({
 setLocale('zh_TW');
 
 const app = createApp(App);
+app.config.globalProperties.$filters = {
+  date,
+  currency,
+};
 
 app.config.globalProperties.$httpMessageState = $httpMessageState;
 
