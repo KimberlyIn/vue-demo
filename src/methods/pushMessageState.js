@@ -1,15 +1,16 @@
+// 載入 eventBus
 import eventBus from '@/methods/eventBus';
 
-export default function (response, title = '更新') {
+// 這是帶有 function 的具名匯出 也代入 response 以及 title
+export default function(response, title = '更新') {
   if (response.data.success) {
     eventBus.emit('push-message', {
       style: 'success',
       title: `${title}成功`,
     });
   } else {
-    // 有些訊息是字串，有些則是陣列，在此統一格式
-    const message = typeof response.data.message === 'string'
-      ? [response.data.message] : response.data.message;
+    const message = response.data.message === 'string'
+    ? [response.data.message] : response.data.message;
     eventBus.emit('push-message', {
       style: 'danger',
       title: `${title}失敗`,
