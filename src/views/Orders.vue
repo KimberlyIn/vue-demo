@@ -1,5 +1,4 @@
 <template>
-  <h3>這裡是 orders</h3>
   <Loading :active="isLoading" :z-index="1060"></Loading>
   <table class="table mt-4">
     <thead>
@@ -41,8 +40,106 @@
               </label>
             </div>
           </td>
+          <td>
+            <div class="btn-group">
+              <button
+                class="btn btn-outline-primary btn-sm"
+                type="button"
+                @click="openModal(item)"
+              >
+                檢視
+              </button>
+              <button
+                class="btn btn-outline-danger btn-sm"
+                type="button"
+                @click="openDelOrderModal(item)"
+              >
+                刪除
+              </button>
+            </div>
+          </td>
         </tr>
       </template>
     </tbody>
   </table>
+  <OrderModal
+    :order="tempOrder"
+    ref="orderModal"
+    @update-paid="updatePaid"
+  ></OrderModal>
+  <DelModal :item="tempOrder" ref="delModal" @del-item="delOrder"></DelModal>
+  <Pagination :pages="pagination" @emitPages="getOrders"></Pagination>
 </template>
+
+<script>
+import DelModal from '@/components/DelModal.vue';
+import OrderModal from '@/components/OrderModal.vue';
+import Pagination from '@/components/Pagination.vue';
+
+export default {
+  data() {
+    return {
+      orders: {},
+      isNew: false,
+      pagination: {},
+      isLoading: false,
+      tempOrder: {},
+      currentPage: 1,
+    };
+  },
+  components: {
+    Pagination,
+    DelModal,
+    OrderModal,
+  },
+  methods: {
+    getOrders(currentPage = 1) {
+      this.currentPage = currentPage;
+      const url = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/orders?page=${currentPage}`;
+      this.isLoading = true;
+      this.$http.get(url, this.tempProduct).then((response) => {
+        this.orders = response.data.orders;
+        this.pagination = response.data.pagination;
+        this.isLoading = false;
+      });
+    },
+    openModal(item) {
+      this.tempOrder = { ...item };
+      this.isNew = false;
+      const orderComponent = this.$refs.orderModal;
+      orderComponent.openModal();
+    },
+    openDelOrderModal(item) {
+      this.tempOrder = { ...item };
+      const delComponent = this.$refs.delModal;
+      delComponent.openModal();
+    },
+    updatePaid(item) {
+      this.isLoading = true;
+      const api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/order/${item.id}`;
+      const paid = {
+        is_paid: item.is_paid,
+      };
+      this.$http.put(api, { data: paid }).then((response) => {
+        this.isLoading = false;
+        const orderComponent = this.$refs.orderModal;
+        orderComponent.hideModal();
+        this.getOrders(this.currentPage);
+        this.$httpMessageState(response, '更新付款狀態');
+      });
+    },
+    delOrder() {
+      const url = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/order/${this.tempOrder.id}`;
+      this.isLoading = true;
+      this.$http.delete(url).then(() => {
+        const delComponent = this.$refs.delModal;
+        delComponent.hideModal();
+        this.getOrders(this.currentPage);
+      });
+    },
+  },
+  created() {
+    this.getOrders();
+  },
+};
+</script>
