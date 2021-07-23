@@ -8,7 +8,7 @@ import ToastMessages from '@/components/ToastMessages.vue';
 import emitter from '@/methods/eventBus';
 import $httpMessageState from '@/methods/pushMessageState';
 
-export default {
+export default { 
   provide() {
     return {
       emitter,
