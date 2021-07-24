@@ -1,5 +1,5 @@
 <template>
-  <h3>這裡是 DelModal </h3>
+  <!-- <h3>這裡是 DelModal </h3> -->
   <div class="madal fade" id="delModal" tabindex="-1" role="dialog"
       aria-labelledby="exampleModalLabel" aria-hidden="true" ref="modal">
     <div class="modal-dialog" role="document">

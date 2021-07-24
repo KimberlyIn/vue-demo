@@ -1,5 +1,5 @@
 <template>
-  <h3>這裡是 admin</h3>
+  <!-- <h3>這裡是 admin</h3> -->
   <Navbar/>
   <div class="container-fluid mt-3 position-relative">
     <ToastMessages></ToastMessages>
