@@ -9,8 +9,8 @@ export default function(response, title = '更新') {
       title: `${title}成功`,
     });
   } else {
-    const message = response.data.message === 'string'
-    ? [response.data.message] : response.data.message;
+    const message = typeof response.data.message === 'string'
+      ? [response.data.message] : response.data.message;
     eventBus.emit('push-message', {
       style: 'danger',
       title: `${title}失敗`,
