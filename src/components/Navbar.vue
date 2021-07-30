@@ -1,5 +1,4 @@
 <template>
-  <!-- <h3>這裡是 Navbar</h3> -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">香菇園</a>
@@ -24,10 +23,8 @@
     </div>
   </nav>
 </template>
-
 <script>
 export default {
-  // 這裡使用 inject 注入 emitter 的方法
   inject: ['emitter'],
   methods: {
     logout() {

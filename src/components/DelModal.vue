@@ -1,7 +1,6 @@
 <template>
-  <!-- <h3>這裡是 DelModal </h3> -->
-  <div class="madal fade" id="delModal" tabindex="-1" role="dialog"
-      aria-labelledby="exampleModalLabel" aria-hidden="true" ref="modal">
+  <div class="modal fade" id="delModal" tabindex="-1" role="dialog"
+       aria-labelledby="exampleModalLabel" aria-hidden="true" ref="modal">
     <div class="modal-dialog" role="document">
       <div class="modal-content border-0">
         <div class="modal-header bg-danger text-white">
@@ -26,13 +25,10 @@
     </div>
   </div>
 </template>
-
 <script>
-// 載入 bootstrap
 import Modal from 'bootstrap/js/dist/modal';
 
 export default {
-  // 將外層資料往內層放
   props: {
     item: {},
   },
@@ -41,10 +37,8 @@ export default {
       modal: '',
     };
   },
-
   emits: ['del-item'],
   methods: {
-    // 在畫面呈現
     openModal() {
       this.modal.show();
     },
@@ -53,7 +47,6 @@ export default {
     },
   },
   mounted() {
-    // bootstrap 樣式
     this.modal = new Modal(this.$refs.modal);
   },
 };

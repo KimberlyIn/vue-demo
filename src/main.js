@@ -1,24 +1,18 @@
-import { createApp } from 'vue'
-
-// axios
+import { createApp } from 'vue';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
-
-// vue3-loading-overlay
 import Loading from 'vue3-loading-overlay';
 import 'vue3-loading-overlay/dist/vue3-loading-overlay.css';
 import CKEditor from '@ckeditor/ckeditor5-vue';
-
 import {
   Form, Field, ErrorMessage, defineRule, configure,
 } from 'vee-validate';
-import AllRules from '@vee-validate/rules'
-import { localize, setLocale } from '@vee-validate/i18n'
-import zhTW from '@vee-validate/i18n/dist/locale/zh_TW.json'
-import $httpMessageState from '@/methods/pushMessageState'; 
-
-import App from './App.vue'
-import router from './router'
+import AllRules from '@vee-validate/rules';
+import { localize, setLocale } from '@vee-validate/i18n';
+import zhTW from '@vee-validate/i18n/dist/locale/zh_TW.json';
+import $httpMessageState from '@/methods/pushMessageState';
+import App from './App.vue';
+import router from './router';
 import { date, currency } from './methods/filters';
 
 Object.keys(AllRules).forEach((rule) => {
@@ -38,8 +32,8 @@ app.config.globalProperties.$filters = {
   currency,
 };
 
+// 正常來說不建議太多方法掛 Global，這裡可以使用 provide 來處理
 app.config.globalProperties.$httpMessageState = $httpMessageState;
-
 
 app.use(router);
 app.use(VueAxios, axios);

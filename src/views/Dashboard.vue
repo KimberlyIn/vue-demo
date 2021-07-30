@@ -1,5 +1,4 @@
 <template>
-  <!-- <h3>這裡是 admin</h3> -->
   <Navbar/>
   <div class="container-fluid mt-3 position-relative">
     <ToastMessages></ToastMessages>
@@ -21,7 +20,7 @@ export default {
   },
   created() {
     const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1');
-    this.$http.defaults.headers.common.Authorization = `${token}`; // 取得 token
+    this.$http.defaults.headers.common.Authorization = `${token}`;
     const api = `${process.env.VUE_APP_API}/api/user/check`;
     this.$http.post(api)
       .then((response) => {
@@ -31,5 +30,5 @@ export default {
         }
       });
   },
-}
+};
 </script>

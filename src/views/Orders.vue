@@ -1,5 +1,4 @@
 <template>
-  <!-- <h3>這裡是 orders</h3> -->
   <Loading :active="isLoading" :z-index="1060"></Loading>
   <table class="table mt-4">
     <thead>
@@ -28,31 +27,34 @@
           <td class="text-right">{{ item.total }}</td>
           <td>
             <div class="form-check form-switch">
-              <input 
-                class="form-check-input" 
-                type="checkbox"  
-                :id="`paidSwitch${item.id}`" 
-                v-model="item.is_paid" 
-                @change="updatePaid(item)"/>
-                <label class="form-check-label" :for="`paidSwitch${item.id}`">
-                  <span v-if="item.is_paid">已付款</span>
-                  <span v-else>未付款</span>
-                </label>
+              <input
+                class="form-check-input"
+                type="checkbox"
+                :id="`paidSwitch${item.id}`"
+                v-model="item.is_paid"
+                @change="updatePaid(item)"
+              />
+              <label class="form-check-label" :for="`paidSwitch${item.id}`">
+                <span v-if="item.is_paid">已付款</span>
+                <span v-else>未付款</span>
+              </label>
             </div>
           </td>
           <td>
             <div class="btn-group">
-              <button 
-              class="btn btn-outline-primary btn-sm" 
-              type="button" 
-              @click="openModal(item)">
+              <button
+                class="btn btn-outline-primary btn-sm"
+                type="button"
+                @click="openModal(item)"
+              >
                 檢視
               </button>
-              <button 
-                class="btn btn-outline-danger btn-sm" 
-                type="button" 
-                @click="openDelOrderModal(item)">
-                  刪除
+              <button
+                class="btn btn-outline-danger btn-sm"
+                type="button"
+                @click="openDelOrderModal(item)"
+              >
+                刪除
               </button>
             </div>
           </td>
@@ -60,10 +62,11 @@
       </template>
     </tbody>
   </table>
-  <OrderModal 
-    :order="tempOrder" 
-    ref="orderModal" 
-    @update-paid="updatePaid"></OrderModal>
+  <OrderModal
+    :order="tempOrder"
+    ref="orderModal"
+    @update-paid="updatePaid"
+  ></OrderModal>
   <DelModal :item="tempOrder" ref="delModal" @del-item="delOrder"></DelModal>
   <Pagination :pages="pagination" @emitPages="getOrders"></Pagination>
 </template>
@@ -71,11 +74,10 @@
 <script>
 import DelModal from '@/components/DelModal.vue';
 import OrderModal from '@/components/OrderModal.vue';
-import Pagination from '@/components/Pagination.vue'; 
+import Pagination from '@/components/Pagination.vue';
 
 export default {
   data() {
-    // 回傳資料
     return {
       orders: {},
       isNew: false,
@@ -85,28 +87,22 @@ export default {
       currentPage: 1,
     };
   },
-  // 元件載入
   components: {
     Pagination,
     DelModal,
     OrderModal,
   },
   methods: {
-    // 取得訂單列表
     getOrders(currentPage = 1) {
-      // 將當前頁面傳入 this.currentPage?
       this.currentPage = currentPage;
       const url = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/orders?page=${currentPage}`;
       this.isLoading = true;
-      // 
-      this.$http.get(url, this.tempProduct)
-      .then((response) => {
+      this.$http.get(url, this.tempProduct).then((response) => {
         this.orders = response.data.orders;
         this.pagination = response.data.pagination;
         this.isLoading = false;
       });
     },
-    // 這一整串不是很理解他的意思
     openModal(item) {
       this.tempOrder = { ...item };
       this.isNew = false;
@@ -118,15 +114,13 @@ export default {
       const delComponent = this.$refs.delModal;
       delComponent.openModal();
     },
-    // 更新付款狀態
     updatePaid(item) {
       this.isLoading = true;
       const api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/order/${item.id}`;
       const paid = {
         is_paid: item.is_paid,
       };
-      this.$http.put(api, { data: paid })
-      .then((response) => {
+      this.$http.put(api, { data: paid }).then((response) => {
         this.isLoading = false;
         const orderComponent = this.$refs.orderModal;
         orderComponent.hideModal();
@@ -134,12 +128,10 @@ export default {
         this.$httpMessageState(response, '更新付款狀態');
       });
     },
-    // 刪除某一筆訂單
     delOrder() {
       const url = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/order/${this.tempOrder.id}`;
       this.isLoading = true;
-      this.$http.delete(url)
-      .then(() => {
+      this.$http.delete(url).then(() => {
         const delComponent = this.$refs.delModal;
         delComponent.hideModal();
         this.getOrders(this.currentPage);
