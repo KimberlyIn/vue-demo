@@ -52,7 +52,7 @@
         </tr>
       </tbody>
     </table>
-    <Pagination :pages="pagination" @emit-pages="getProducts"></Pagination>
+    <Pagination :pages="pagination" @emit-pages="getProducts" />
     <!-- ProductModal -->
     <ProductModal
       @update-product="updateProduct"
@@ -61,7 +61,7 @@
       ref="productModal"
     />
     <!-- DelModal -->
-    <DelModal :item="tempProduct" ref="delModal" @del-item="delProduct" />
+    <DelModal :product="tempProduct" ref="delModal" @del-item="delProduct" />
   </div>
 </template>
 
@@ -75,7 +75,9 @@ export default {
     return {
       products: [],
       pagination: {},
-      tempProduct: {},
+      tempProduct: {
+        imagesUrl: [],
+      },
       isNew: false,
       isLoading: false,
       status: {
@@ -93,7 +95,7 @@ export default {
     DelModal,
     Pagination,
   },
-  inject: ['emitter'],
+  inject: ['emitter', '$httpMessageState'],
   methods: {
     getProducts(page = 1) {
       this.currentPage = page;
@@ -122,20 +124,20 @@ export default {
       this.tempProduct = item;
       let api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/product`;
       let httpMethod = 'post';
-      let status = '新增產品';
+      let stauts = '新增產品';
       if (!this.isNew) {
         api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/product/${this.tempProduct.id}`;
         httpMethod = 'put';
-        status = '更新產品';
+        stauts = '更新產品';
       }
       const productComponent = this.$refs.productModal;
       this.$http[httpMethod](api, { data: this.tempProduct }).then((response) => {
         if (response.data.success) {
-          this.$httpMessageState(response, status);
+          this.$httpMessageState(response, stauts);
           productComponent.hideModal();
           this.getProducts(this.currentPage);
         } else {
-          this.$httpMessageState(response, status);
+          this.$httpMessageState(response, stauts);
         }
       });
     },
@@ -148,10 +150,14 @@ export default {
       const url = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/product/${this.tempProduct.id}`;
       this.isLoading = true;
       this.$http.delete(url).then((response) => {
-        this.$httpMessageState(response, '刪除產品');
-        const delComponent = this.$refs.delModal;
-        delComponent.hideModal();
-        this.getProducts(this.currentPage);
+        if (response.data.success) {
+          this.$httpMessageState(response, '刪除產品');
+          const delComponent = this.$refs.delModal;
+          delComponent.hideModal();
+          this.getProducts(this.currentPage);
+        } else {
+          this.$httpMessageState(response, '刪除產品');
+        }
       });
     },
   },

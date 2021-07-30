@@ -20,13 +20,9 @@
         <span class="page-link" v-if="page === pages.current_page">{{
           page
         }}</span>
-        <a
-          class="page-link"
-          v-else
-          href="#"
-          @click.prevent="updatePage(page)"
-          >{{ page }}</a
-        >
+        <a class="page-link" v-else href="#" @click.prevent="updatePage(page)">{{
+          page
+        }}</a>
       </li>
       <li class="page-item" :class="{ disabled: !pages.has_next }">
         <a
@@ -46,7 +42,14 @@
 // :pages="{ 頁碼資訊 }"
 // @emitPages="更新頁面事件"
 export default {
-  props: ['pages'],
+  props: {
+    pages: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+  },
   methods: {
     updatePage(page) {
       this.$emit('emitPages', page);

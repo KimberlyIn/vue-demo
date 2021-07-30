@@ -12,7 +12,7 @@
         <h2>{{ product.title }}</h2>
         <div>{{ product.content }}</div>
         <div>{{ product.description }}</div>
-        <img :src="product.imageUrl" class="img-fluid mb-3">
+        <img :src="product.imageUrl" alt="" class="img-fluid mb-3">
       </article>
       <div class="col-4">
         <div class="h5" v-if="!product.price">{{ product.origin_price }} 元</div>
@@ -42,10 +42,11 @@ export default {
       const api = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/product/${this.id}`;
       this.isLoading = true;
       this.$http.get(api).then((response) => {
+        console.log(response.data);
+        this.isLoading = false;
         if (response.data.success) {
           this.product = response.data.product;
         }
-        this.isLoading = false;
       });
     },
     addToCart(id, qty = 1) {

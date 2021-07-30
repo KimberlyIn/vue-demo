@@ -2,7 +2,6 @@
   <div class="container">
     <Loading :active="isLoading" :z-index="1060"></Loading>
     <div class="mt-4">
-      <!-- 產品列表 -->
       <table class="table align-middle">
         <thead>
           <tr>
@@ -25,7 +24,7 @@
               ></div>
             </td>
             <td>
-              <a href="#" class="text-dark">{{ item.title }}</a>
+              <h6 href="#" class="text-dark">{{ item.title }}</h6>
             </td>
             <td>
               <div class="h5" v-if="!item.price">
@@ -43,8 +42,8 @@
                 <button
                   type="button"
                   class="btn btn-outline-secondary"
-                  :disabled="status.loadingItem === item.id || !item.is_enabled"
                   @click="getProduct(item.id)"
+                  :disabled="status.loadingItem === item.id || !item.is_enabled"
                 >
                   <span
                     class="spinner-border spinner-grow-sm"
@@ -110,9 +109,9 @@
                   <input
                     type="number"
                     class="form-control"
+                    @blur="updateCart(item)"
                     min="1"
                     v-model.number="item.qty"
-                    @blur="updateCart(item)"
                   />
                   <div class="input-group-text">/ {{ item.product.unit }}</div>
                 </div>
@@ -148,15 +147,13 @@
           v-model="coupon_code"
           placeholder="請輸入優惠碼"
         />
-        <div class="input-group-append">
-          <button
-            class="btn btn-outline-secondary"
-            type="button"
-            @click="addCouponCode"
-          >
-            套用優惠碼
-          </button>
-        </div>
+        <button
+          class="btn btn-outline-secondary"
+          type="button"
+          @click="addCouponCode"
+        >
+          套用優惠碼
+        </button>
       </div>
     </div>
 
@@ -269,6 +266,7 @@ export default {
       coupon_code: '',
     };
   },
+  inject: ['emitter', '$httpMessageState'],
   methods: {
     getProducts() {
       const url = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/products`;
@@ -289,10 +287,22 @@ export default {
         product_id: id,
         qty,
       };
-
       this.$http.post(url, { data: cart }).then((response) => {
         this.$httpMessageState(response, '加入購物車');
         this.status.loadingItem = '';
+        this.isLoading = false;
+        this.getCart();
+      });
+    },
+    updateCart(data) {
+      this.isLoading = true;
+      const url = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/cart/${data.id}`;
+      const cart = {
+        product_id: data.product_id,
+        qty: data.qty,
+      };
+      this.$http.put(url, { data: cart }).then((response) => {
+        this.$httpMessageState(response, '更新購物車');
         this.isLoading = false;
         this.getCart();
       });
@@ -335,20 +345,6 @@ export default {
         }
       });
     },
-    updateCart(data) {
-      this.isLoading = true;
-      const url = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/cart/${data.id}`;
-      const cart = {
-        product_id: data.product_id,
-        qty: data.qty,
-      };
-
-      this.$http.put(url, { data: cart }).then((response) => {
-        this.$httpMessageState(response, '更新購物車');
-        this.isLoading = false;
-        this.getCart();
-      });
-    },
     addCouponCode() {
       const url = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/coupon`;
       const coupon = {
@@ -357,21 +353,20 @@ export default {
       this.isLoading = true;
       this.$http.post(url, { data: coupon }).then((response) => {
         this.$httpMessageState(response, '加入優惠券');
-        this.getCart();
         this.isLoading = false;
+        this.getCart();
       });
     },
     createOrder() {
-      this.isLoading = true;
       const url = `${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/order`;
       const order = this.form;
       this.$http.post(url, { data: order }).then((response) => {
         this.$httpMessageState(response, '建立訂單');
         if (response.data.success) {
           this.$router.push(`/user/checkout/${response.data.orderId}`);
-          this.$refs.form.resetForm();
         }
         this.isLoading = false;
+        this.$refs.form.resetForm();
       });
     },
   },

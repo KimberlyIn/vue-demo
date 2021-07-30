@@ -140,7 +140,7 @@
   </div>
 </template>
 <script>
-import modalMixin from '@/mixins/modalMixin';
+import Modal from 'bootstrap/js/dist/modal';
 
 export default {
   props: {
@@ -154,16 +154,25 @@ export default {
       status: {},
       modal: '',
       tempOrder: {},
-      isPaid: false,
     };
   },
   emits: ['update-paid'],
-  mixins: [modalMixin],
   inject: ['emitter'],
   watch: {
     order() {
       this.tempOrder = this.order;
     },
+  },
+  methods: {
+    openModal() {
+      this.modal.show();
+    },
+    hideModal() {
+      this.modal.hide();
+    },
+  },
+  mounted() {
+    this.modal = new Modal(this.$refs.modal);
   },
 };
 </script>

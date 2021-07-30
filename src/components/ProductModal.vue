@@ -13,7 +13,7 @@
         <div class="modal-header bg-dark text-white">
           <h5 class="modal-title" id="exampleModalLabel">
             <span v-if="isNew">新增產品</span>
-            <span v-else>編輯產品</span>
+            <span v-else>新增產品</span>
           </h5>
           <button
             type="button"
@@ -66,7 +66,7 @@
                     placeholder="請輸入連結"
                   />
                   <div>
-                    <img class="img-fluid" :src="image"/>
+                    <img class="img-fluid" :src="image" />
                   </div>
                   <button
                     type="button"
@@ -83,6 +83,7 @@
                   "
                 >
                   <button
+                    type="button"
                     class="btn btn-outline-primary btn-sm d-block w-100"
                     @click="tempProduct.imagesUrl.push('')"
                   >
@@ -144,8 +145,8 @@
                     type="number"
                     class="form-control"
                     id="price"
-                    v-model.number="tempProduct.price"
                     min="0"
+                    v-model.number="tempProduct.price"
                     placeholder="請輸入售價"
                   />
                 </div>
@@ -211,7 +212,7 @@
   </div>
 </template>
 <script>
-import modalMixin from '@/mixins/modalMixin';
+import Modal from 'bootstrap/js/dist/modal';
 
 export default {
   props: {
@@ -232,7 +233,6 @@ export default {
     };
   },
   emits: ['update-product'],
-  mixins: [modalMixin],
   inject: ['emitter'],
   watch: {
     product() {
@@ -264,7 +264,6 @@ export default {
           this.emitter.emit('push-message', {
             style: 'success',
             title: '圖片上傳結果',
-            content: response.data.message,
           });
         } else {
           this.$refs.fileInput.value = '';
@@ -276,6 +275,15 @@ export default {
         }
       });
     },
+    openModal() {
+      this.modal.show();
+    },
+    hideModal() {
+      this.modal.hide();
+    },
+  },
+  mounted() {
+    this.modal = new Modal(this.$refs.modal);
   },
 };
 </script>
