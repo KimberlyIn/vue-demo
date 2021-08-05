@@ -10,12 +10,12 @@ import $httpMessageState from '@/methods/pushMessageState';
 
 export default {
   provide() {
-    return {
+    return { 
       emitter,
       $httpMessageState,
     };
   },
-  components: {
+  components: {             
     ToastMessages,
   },
 };
